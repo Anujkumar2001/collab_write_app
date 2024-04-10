@@ -38,11 +38,9 @@ const server = app.listen(port, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Replace with your client's URL
+    origin: "http://localhost:5173",
   },
 });
-
-let documents = {};
 
 io.on("connection", (socket) => {
   console.log("New client connected");
@@ -52,14 +50,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join", (data) => {
-    console.log("user jion with" + data + " file id");
+    console.log("user join with" + data + " file id");
     socket.join(data);
   });
 
-  socket.on("updateDocument", ({ fileId, content }) => {
-    documents[fileId] = content;
-    // socket.join(fileId);
-
+  socket.on("updateDocument", ({ content }) => {
     socket.broadcast.to(fileId).emit("documentContent", content);
   });
 });

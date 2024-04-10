@@ -45,13 +45,7 @@ const FileEditor = () => {
   socket.emit("join", fileId);
 
   useEffect(() => {
-    // Generate a random docId for demo purposes
-    // const generatedId = Math.random().toString(36).substring(7);
-    // setDocId(generatedId);
-
-    // Listen for changes from server
     socket.on("documentContent", (newContent) => {
-      // console.log({ newContent });
       setTextAreaContent(newContent);
     });
 
