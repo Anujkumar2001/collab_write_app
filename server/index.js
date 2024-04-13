@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import fileRouter from "./routes/file.route.js";
 import { Server } from "socket.io";
+import { createServer } from "node:http";
 
 dotenv.config({ path: "./.env" });
 
@@ -42,19 +43,23 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("New client connected");
+// const app = express();
+// const server = createServer(app);
+// const io = new Server(server);
 
+io.on("connection", (socket) => {
+  console.log("user connected");
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
 
-  socket.on("join", (data) => {
-    console.log("user join with" + data + " file id");
-    socket.join(data);
+  socket.on("join", ({ fileId, currentUserId }) => {
+    console.log("user join with" + currentUserId + " file id");
+    socket.join(fileId);
+    socket.emit("currentUserId", currentUserId);
   });
 
-  socket.on("updateDocument", ({ content }) => {
-    socket.broadcast.to(fileId).emit("documentContent", content);
+  socket.on("updateDocument", ({ debouncedTextContent, fileId }) => {
+    socket.broadcast.to(fileId).emit("documentContent", debouncedTextContent);
   });
 });
